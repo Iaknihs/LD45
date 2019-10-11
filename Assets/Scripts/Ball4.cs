@@ -18,6 +18,7 @@ public class Ball4 : MonoBehaviour
     private bool movable = true;
     private GameObject lights;
     private Animator anim;
+    private Controls controls;
 
     private bool isGrounded;
 
@@ -30,18 +31,18 @@ public class Ball4 : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         if (movable)
         {
             if (!canFly){
-                velocity.x = Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
-                velocity.y = Mathf.Max(velocity.y - gravity * Time.deltaTime, max_fall_speed);
+                velocity.x = (controls.right - controls.left) * speed * Time.fixedDeltaTime;
+                velocity.y = Mathf.Max(velocity.y - gravity * Time.fixedDeltaTime, max_fall_speed);
             }
             else
             {
-                velocity.x = Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
-                velocity.y = Input.GetAxisRaw("Vertical") * speed * Time.deltaTime;
+                velocity.x = (controls.right - controls.left) * speed * Time.fixedDeltaTime;
+                velocity.y = (controls.up - controls.down) * speed * Time.fixedDeltaTime;
             }
         }
         else
@@ -105,5 +106,21 @@ public class Ball4 : MonoBehaviour
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene("Credits");
         }
+    }
+
+    private void Update()
+    {
+        controls.right = Mathf.Max((int)Input.GetAxisRaw("Horizontal"), 0);
+        controls.left = Mathf.Abs(Mathf.Min((int)Input.GetAxisRaw("Horizontal"), 0));
+        controls.up = Mathf.Max((int)Input.GetAxisRaw("Vertical"), 0);
+        controls.down = Mathf.Abs(Mathf.Min((int)Input.GetAxisRaw("Vertical"), 0));
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            controls.up = 1;
+    }
+
+    private struct Controls
+    {
+        public int up, down, left, right;
     }
 }

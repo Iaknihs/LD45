@@ -11,7 +11,7 @@ public class Camera1 : MonoBehaviour
     public Vector3 _offset = Vector3.zero;
 
     // Update is called once per frame
-    void LateUpdate()
+    void FixedUpdate()
     {
         if (doFollow)
         {

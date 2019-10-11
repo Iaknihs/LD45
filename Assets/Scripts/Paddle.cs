@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Paddle : MonoBehaviour
 {
-
     public Transform follow;
     public string axis;
     public float speed = 10.1f;
@@ -22,7 +21,7 @@ public class Paddle : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
 
         float fPos = (axis == "x") ? follow.position.x : (axis == "y") ? follow.position.y : follow.position.z;
@@ -42,7 +41,7 @@ public class Paddle : MonoBehaviour
             };
 
             // rb.velocity = velocity;
-            transform.Translate(velocity * (speed * dir * Time.deltaTime), Space.World);
+            transform.Translate(velocity * (speed * dir * Time.fixedDeltaTime), Space.World);
         }
     }
 

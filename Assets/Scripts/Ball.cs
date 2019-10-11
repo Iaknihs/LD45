@@ -30,6 +30,8 @@ public class Ball : MonoBehaviour
     private bool isColliding;
     public Material rainbowMat;
 
+    private Controls controls;
+
     public int trigger = 0;
 
     // Start is called before the first frame update
@@ -52,8 +54,17 @@ public class Ball : MonoBehaviour
     }
 
 
+    private void Update()
+    {
+        controls.right = Mathf.Max((int)Input.GetAxisRaw("Horizontal"), 0);
+        controls.left = Mathf.Abs(Mathf.Min((int)Input.GetAxisRaw("Horizontal"), 0));
+        controls.down = Mathf.Max((int)Input.GetAxisRaw("Vertical"), 0);
+        controls.up = Mathf.Abs(Mathf.Min((int)Input.GetAxisRaw("Vertical"), 0));
+    }
+
+
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         isColliding = false;
 
@@ -83,7 +94,7 @@ public class Ball : MonoBehaviour
         }
         else if(state == BallState.freeroam)
         {
-            velocity = new Vector3(Input.GetAxisRaw("Horizontal"),Input.GetAxisRaw("Vertical"),0);
+            velocity = new Vector3(controls.right - controls.left, controls.down - controls.up, 0); 
             velocity.Normalize();
         }
         else if(state == BallState.cutscene)
@@ -125,7 +136,7 @@ public class Ball : MonoBehaviour
         //if (state != BallState.freeroam)
         //    transform.Translate(velocity * speed);
         //else
-        controller.Move(velocity * speed * Time.deltaTime);
+        controller.Move(velocity * speed * Time.fixedDeltaTime);
     }
 
 
@@ -228,5 +239,10 @@ public class Ball : MonoBehaviour
             }
             yield return new WaitForSeconds(.1f);
         }
+    }
+
+    private struct Controls
+    {
+        public int up, down, left, right;
     }
 }

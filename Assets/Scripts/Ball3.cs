@@ -17,6 +17,7 @@ public class Ball3 : MonoBehaviour
     private bool justJumped;
 
     private bool isGrounded;
+    private Controls controls;
 
     void Start()
     {
@@ -27,14 +28,14 @@ public class Ball3 : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        velocity.x = Input.GetAxisRaw("Horizontal") * speed * Time.deltaTime;
+        velocity.x = (controls.right - controls.left) * speed * Time.fixedDeltaTime;
         if (controller.isGrounded)
         {
             
             velocity.y = 0.0f;
-            if (Input.GetAxisRaw("Vertical") > 0)
+            if (controls.up - controls.down > 0)
             {
                 if (!justJumped)
                 {
@@ -46,7 +47,7 @@ public class Ball3 : MonoBehaviour
             else
                 justJumped = false;
         }
-        velocity.y = Mathf.Max(velocity.y - gravity * Time.deltaTime, max_fall_speed);
+        velocity.y = Mathf.Max(velocity.y - gravity * Time.fixedDeltaTime, max_fall_speed);
         controller.Move(velocity);
     }
 
@@ -88,5 +89,21 @@ public class Ball3 : MonoBehaviour
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Scene04");
             yield return new WaitForSeconds(.1f);
         }
+    }
+
+    private void Update()
+    {
+        controls.right = Mathf.Max((int)Input.GetAxisRaw("Horizontal"), 0);
+        controls.left = Mathf.Abs(Mathf.Min((int)Input.GetAxisRaw("Horizontal"), 0));
+        controls.up = Mathf.Max((int)Input.GetAxisRaw("Vertical"), 0);
+        controls.down = Mathf.Abs(Mathf.Min((int)Input.GetAxisRaw("Vertical"), 0));
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            controls.up = 1;
+    }
+
+    private struct Controls
+    {
+        public int up, down, left, right;
     }
 }

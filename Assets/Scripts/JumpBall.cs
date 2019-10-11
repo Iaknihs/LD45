@@ -11,6 +11,12 @@ public class JumpBall : MonoBehaviour
     private Renderer renderer;
     private CharacterController controller;
     private Vector3 spawnPos;
+    private Controls controls;
+
+    private struct Controls
+    {
+        public int left, right;
+    }
 
     void Start()
     {
@@ -20,13 +26,20 @@ public class JumpBall : MonoBehaviour
         spawnPos = transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
+
+    private void Update()
+    {
+        controls.right = Mathf.Max((int)Input.GetAxisRaw("Horizontal"), 0);
+        controls.left = Mathf.Abs(Mathf.Min((int)Input.GetAxisRaw("Horizontal"), 0));
+    }
+
+
+    void FixedUpdate()
     {
 
-        velocity = new Vector3(Input.GetAxisRaw("Horizontal"), -1.0f, 0);
+        velocity = new Vector3(controls.right - controls.left, -1.0f, 0);
         velocity.Normalize();
-        controller.Move(velocity * speed * Time.deltaTime);
+        controller.Move(velocity * speed * Time.fixedDeltaTime);
     }
 
     IEnumerator SpawnTailObject()
